@@ -1,9 +1,6 @@
-body {
-    background-color: rgb(151, 176, 151);
-    margin: 0;
-}
 
   body {
+    background-color: rgb(151, 176, 151);
     margin: 0;
     font-family: Arial, sans-serif;
   }
@@ -62,32 +59,51 @@ body {
     cursor: pointer;
   }
   
-  /* SLIDER */
   .slider {
     width: 100%;
     height: 350px;
     overflow: hidden;
-    margin-top: 40px;
   }
   
   .slides {
     display: flex;
     width: 500%;
-    animation: slide 15s infinite;
+    height: 100%;
+    animation: slide 20s infinite;
   }
   
   .slide {
-    width: 100%;
-    height: 350px;
-    background-size: cover;
-    background-position: center;
+    width: 20%;
+    height: 100%;
+    position: relative;
+    flex-shrink: 0; 
   }
   
-  /* Animation */
+  .slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  
+  /* TEXT OVER IMAGE */
+  .text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    background: rgba(0,0,0,0.4);
+    padding: 10px 20px;
+    border-radius: 10px;
+  }
+  
   @keyframes slide {
-    0%,20% { transform: translateX(0); }
-    25%,45% { transform: translateX(-100%); }
-    50%,70% { transform: translateX(-200%); }
-    75%,95% { transform: translateX(-300%); }
-    100% { transform: translateX(-400%); }
+    0%, 20% { transform: translateX(0); }
+    25%, 40% { transform: translateX(-20%); }
+    45%, 60% { transform: translateX(-40%); }
+    65%, 80% { transform: translateX(-60%); }
+    85%, 100% { transform: translateX(-80%); }
   }
