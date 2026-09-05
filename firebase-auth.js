@@ -12,6 +12,12 @@ import {
   updateProfile
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
+if (window.location.hostname === "127.0.0.1") {
+  window.location.replace(
+    `http://localhost:${window.location.port}${window.location.pathname}${window.location.search}${window.location.hash}`
+  );
+}
+
 const firebaseConfig = {
   apiKey: "AIzaSyCEeGZiQ_7Hpnp--6QmHEV8JDjgU0AEVhs",
   authDomain: "rightbite-e0afb.firebaseapp.com",
@@ -33,13 +39,19 @@ isSupported().then((supported) => {
 });
 
 const messages = {
+  "auth/account-exists-with-different-credential": "This email already uses another sign-in method.",
+  "auth/cancelled-popup-request": "Another Google sign-in popup is already open.",
   "auth/email-already-in-use": "An account already exists with this email.",
+  "auth/internal-error": "Firebase had an internal error. Check that this page is opened from localhost or an authorized domain.",
   "auth/invalid-email": "Please enter a valid email address.",
   "auth/invalid-credential": "The email or password is incorrect.",
   "auth/missing-email": "Please enter your email address first.",
-  "auth/operation-not-allowed": "Email/password sign-in is not enabled in Firebase.",
+  "auth/network-request-failed": "Network error. Please check your internet connection and try again.",
+  "auth/operation-not-allowed": "This sign-in method is not enabled in Firebase.",
+  "auth/popup-blocked": "The browser blocked the Google popup. Please allow popups for this page.",
   "auth/popup-closed-by-user": "Google sign-in was closed before it finished.",
   "auth/too-many-requests": "Too many attempts. Please wait a moment and try again.",
+  "auth/unauthorized-domain": "This website domain is not allowed in Firebase Authentication.",
   "auth/user-not-found": "No account was found with this email.",
   "auth/weak-password": "Please use a password with at least 6 characters."
 };
@@ -51,7 +63,11 @@ function showMessage(element, text, isError = false) {
 }
 
 function firebaseErrorMessage(error) {
-  return messages[error.code] || "Something went wrong. Please try again.";
+  if (error.code === "auth/unauthorized-domain") {
+    return `Firebase is blocking this domain: ${window.location.hostname || "file URL"}. Open http://localhost:5500/signin.html or add that exact domain in Firebase.`;
+  }
+
+  return messages[error.code] || `${error.code || "Firebase error"}: ${error.message || "Please try again."}`;
 }
 
 const signupForm = document.querySelector("#signup-form");
