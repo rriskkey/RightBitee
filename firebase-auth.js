@@ -3,9 +3,11 @@ import { getAnalytics, isSupported } from "https://www.gstatic.com/firebasejs/10
 import {
   createUserWithEmailAndPassword,
   getAuth,
+  GoogleAuthProvider,
   sendEmailVerification,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
+  signInWithPopup,
   signOut,
   updateProfile
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
@@ -22,6 +24,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const googleProvider = new GoogleAuthProvider();
 
 isSupported().then((supported) => {
   if (supported) {
@@ -35,6 +38,7 @@ const messages = {
   "auth/invalid-credential": "The email or password is incorrect.",
   "auth/missing-email": "Please enter your email address first.",
   "auth/operation-not-allowed": "Email/password sign-in is not enabled in Firebase.",
+  "auth/popup-closed-by-user": "Google sign-in was closed before it finished.",
   "auth/too-many-requests": "Too many attempts. Please wait a moment and try again.",
   "auth/user-not-found": "No account was found with this email.",
   "auth/weak-password": "Please use a password with at least 6 characters."
@@ -129,6 +133,8 @@ if (signupForm) {
 const signinForm = document.querySelector("#signin-form");
 const signinMessage = document.querySelector("#signin-message");
 const forgotPasswordButton = document.querySelector("#forgot-password");
+const googleSigninButton = document.querySelector("#google-signin");
+const googleSignupButton = document.querySelector("#google-signup");
 
 if (signinForm) {
   signinForm.addEventListener("submit", async (event) => {
@@ -183,3 +189,24 @@ if (forgotPasswordButton && signinForm) {
     }
   });
 }
+
+function wireGoogleButton(button, messageElement, progressMessage) {
+  if (!button) return;
+
+  button.addEventListener("click", async () => {
+    button.disabled = true;
+    showMessage(messageElement, progressMessage);
+
+    try {
+      await signInWithPopup(auth, googleProvider);
+      showMessage(messageElement, "Google sign-in successful.");
+      window.location.href = "searc.html";
+    } catch (error) {
+      showMessage(messageElement, firebaseErrorMessage(error), true);
+      button.disabled = false;
+    }
+  });
+}
+
+wireGoogleButton(googleSigninButton, signinMessage, "Opening Google sign-in...");
+wireGoogleButton(googleSignupButton, signupMessage, "Opening Google sign-up...");
